@@ -1,0 +1,6 @@
+{
+  "name": "Commission Calculator",
+  "description": "Calculate your sales commission achievement based on Voice, Enterprise, Terminal, and Fixed components.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

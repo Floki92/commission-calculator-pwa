@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* Full Report Export Mode: forces full desktop width so no columns or inputs are cut off */
+.report-export-mode {
+  width: 1440px !important;
+  max-width: 1440px !important;
+  min-width: 1440px !important;
+  background-color: #f8fafc !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+}
+
+.report-export-mode .report-export-header {
+  display: flex !important;
+}
+
+.report-export-mode .overflow-x-auto {
+  overflow: visible !important;
+}
+
+.report-export-mode table {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+.report-export-mode .report-hide-on-export {
+  display: none !important;
+}
+
+.report-export-mode .report-show-on-export {
+  display: block !important;
+}
+
+.report-export-mode .export-hide-input {
+  display: none !important;
+}
+
+/* News Bar Ping-Pong Ticker: Moves smoothly from Right to Left and back (vice-versa) to display the entire note */
+@keyframes newsTickerPingPong {
+  0%, 18% {
+    transform: translateX(0);
+  }
+  48%, 68% {
+    transform: translateX(calc(-1 * var(--ticker-shift, 140px)));
+  }
+  98%, 100% {
+    transform: translateX(0);
+  }
+}
+
+.news-ticker-pingpong {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: newsTickerPingPong 7.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.news-ticker-container:hover .news-ticker-pingpong,
+.news-ticker-container:active .news-ticker-pingpong {
+  animation-play-state: paused;
+}
+
+/* Fallback Continuous RTL Marquee */
+@keyframes newsTickerRtl {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.news-ticker-track {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: newsTickerRtl 14s linear infinite;
+  will-change: transform;
+}
+
+.news-ticker-container:hover .news-ticker-track,
+.news-ticker-container:active .news-ticker-track {
+  animation-play-state: paused;
+}
+
+.report-export-mode .export-show-text {
+  display: flex !important;
+}
+
+.report-export-mode .no-print {
+  display: none !important;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: landscape;
+    margin: 8mm;
+  }
+
+  #printable-report {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  table {
+    width: 100% !important;
+    min-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+}
+
