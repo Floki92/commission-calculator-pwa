@@ -280,7 +280,7 @@ export function CommissionDashboard() {
   const monthProgressPct = Math.min(100, Math.max(0, (monthConfig.today / monthConfig.totalDays) * 100));
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 pb-16 font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16 font-sans">
       {/* Top Navigation with Vodafone Brandmark */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-20 shadow-xs">
         <div className="max-w-[1920px] w-full mx-auto px-3 sm:px-6 lg:px-8 xl:px-10 2xl:px-12 h-14 sm:h-16 flex items-center justify-between gap-2">
