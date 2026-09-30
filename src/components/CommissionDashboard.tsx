@@ -22,6 +22,7 @@ import {
   LayoutGrid, 
   ArrowUp,
   Calendar,
+  Download,
   RotateCcw,
   TrendingUp,
   Percent,
@@ -29,6 +30,11 @@ import {
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import { jsPDF } from 'jspdf';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
 
 const emptyComponent: ComponentInput = { target: null, actual: null };
 
@@ -213,6 +219,51 @@ export function CommissionDashboard() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // PWA install prompt: captured while deferred, fired on user click
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isInstalled, setIsInstalled] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      // Safari iOS uses a different media query
+      (navigator as Navigator & { standalone?: boolean }).standalone === true
+    );
+  });
+
+  useEffect(() => {
+    const onBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    const onAppInstalled = () => {
+      setInstallPrompt(null);
+      setIsInstalled(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+    window.addEventListener('appinstalled', onAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', onAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return;
+    try {
+      await installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setIsInstalled(true);
+      }
+    } catch (err) {
+      console.error('Failed to trigger PWA install prompt:', err);
+    } finally {
+      setInstallPrompt(null);
+    }
+  };
+
   /**
    * Generates a complete, high-resolution Full Report PDF using jsPDF with all updated features.
    */
@@ -320,6 +371,19 @@ export function CommissionDashboard() {
               <span className="hidden sm:inline">Download PDF</span>
               <span className="sm:hidden">PDF</span>
             </button>
+
+            {/* PWA Install Button - shown only when the browser offers the install prompt */}
+            {!isInstalled && installPrompt && (
+              <button
+                onClick={handleInstallClick}
+                className="no-print flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-[#E60000] hover:bg-red-50 transition-colors px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg border border-slate-200 hover:border-red-200"
+                title="Install this app on your device for offline access"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Install App</span>
+                <span className="sm:hidden">Install</span>
+              </button>
+            )}
 
             {/* Reset Button */}
             <button
